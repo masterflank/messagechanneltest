@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    <title>Channel messaging demo</title>
+
+    <link rel="stylesheet" href="">
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <h1>Channel messaging demo</h1>
+    <button onClick='buttonOneClick()'>Send on channel 1</button>
+    <button onClick='buttonTwoClick()'>Send on channel 2</button>
+    <p>My body</p>
+
+    <iframe src="page2.html" width='480' height='320'>
+    </iframe>
+  </body>
+  <script>
+    var para = document.querySelector('p');
+    
+    var ifr = document.querySelector('iframe');
+    var otherWindow = ifr.contentWindow;
+
+    function handleMessage(e) {
+        para.innerHTML = e.data;
+    }
+
+    var channelOne = new MessageChannel();
+    var channelTwo = new MessageChannel();
+    
+    channelOne.port1.onmessage = handleMessage;
+    channelTwo.port1.onmessage = handleMessage;
+
+    function buttonOneClick() {
+      console.log('buttonOneClick');
+      otherWindow.postMessage('Hello on channel one!', '*', [channelOne.port2]);
+    };
+
+    function buttonTwoClick() {
+      console.log('buttonTwoClick');
+      otherWindow.postMessage('Hello on channel two!', '*', [channelTwo.port2]);
+    };
+  </script>
+</html>
